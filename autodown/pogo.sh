@@ -86,4 +86,9 @@ else
 	echo "$keyw not found in web page!"
 fi
 
+	if [[ -f /tmp/auto_down_bat.list ]]
+	then
+		sed -i "/$keyw/d" /tmp/auto_down_bat.list
+	fi
+	
 exit 0
