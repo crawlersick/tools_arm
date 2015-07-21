@@ -50,7 +50,7 @@ then
 
 #【極影字幕社】 ★ 六花的勇者 Rokka_no_Yuusha 第03話 BIG5 MP4 720P
 #【極影字幕社】 ★7月新番 【亂步奇譚 Game of Laplace】【Ranpo Kitan Game of Laplace】【03】BIG5 MP4_720P
-	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【])[0-9_-]+(?=[\]話话】])'`
+	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_-]+(?=[\]話话】\s])'`
 
 	if [[ ! -z $epnum ]]
 	then
@@ -76,6 +76,12 @@ then
 	if [[ $re_code -eq 0 ]]
 		then
 		echo "$keyw""_""$epnum"" is already done!"
+		
+			if [[ -f /tmp/auto_down_bat.list ]]
+			then
+				sed -i "/$keyw/d" /tmp/auto_down_bat.list
+			fi
+		
 		exit 0
 	fi
 

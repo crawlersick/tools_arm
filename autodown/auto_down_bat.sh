@@ -21,10 +21,9 @@ i=0
 	then 
 		echo 'p-r-o-c-e-s-s-i-n-g '${namelist[i]} >> /tmp/auto_down_bat.list
 		pogo.sh ${namelist[i]} &
-		i=`expr $i + 1`
 	fi
-	
+	i=`expr $i + 1`
 	done
 sleep $time_s
-
+namelist=($(cat auto_ani.list))
 done
