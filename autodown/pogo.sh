@@ -9,7 +9,7 @@ then
 fi
 if [[ -z "$seedw" ]]
 then 
-	seedw=100
+	seedw=30
 fi
 
 echo "$seedw" | grep -qP '[0-9]+'
@@ -21,7 +21,11 @@ if [[ $re_code -eq 1 ]]
 	exit 11
 fi
 
-textall=`curl -s --compressed http://share.popgo.org/search.php?title=$keyw`
+
+
+#set -x
+textall=`curl -s --compressed -G --data-urlencode "title=$keyw" http://share.popgo.org/search.php`
+#set +x
 IFS=$'\r\n'
 namelist=($(echo $textall | grep -oP "`sed -n 2p explist`"))
 sizelist=($(echo $textall | grep -oP "`sed -n 3p explist`"))
@@ -67,7 +71,7 @@ i=`expr $i + 1`
 done
 
 echo 'begin download!'${torlinklist[i]}
-
+#read asdlkfjasflkasjdf
 if [[ ! -z "${torlinklist[i]}" ]]
 then
 	touch "$downloadfolder/autodownload.list"
@@ -81,7 +85,7 @@ then
 			then
 				sed -i "/$keyw/d" /tmp/auto_down_bat.list
 			fi
-		
+		date
 		exit 0
 	fi
 
@@ -96,5 +100,5 @@ fi
 	then
 		sed -i "/$keyw/d" /tmp/auto_down_bat.list
 	fi
-	
+date
 exit 0
