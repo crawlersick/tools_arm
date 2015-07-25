@@ -1,4 +1,5 @@
 #!/bin/bash
+
 downloadfolder=$HOME'/Downloads'
 keyw=$1
 seedw=$2
@@ -21,6 +22,14 @@ if [[ $re_code -eq 1 ]]
 	exit 11
 fi
 
+
+
+THREAD_COUNT=$(ps -ef | grep "aria2c" | grep "$keyw" | wc -l)
+if [[ $THREAD_COUNT -gt 0 ]]
+then
+	echo "$keyw"" is proccessing... skip this now."
+	exit 0
+fi
 
 
 #set -x
@@ -81,24 +90,25 @@ then
 		then
 		echo "$keyw""_""$epnum"" is already done!"
 		
-			if [[ -f /tmp/auto_down_bat.list ]]
-			then
-				sed -i "/$keyw/d" /tmp/auto_down_bat.list
-			fi
 		date
 		exit 0
 	fi
 
 	mkdir -p "$downloadfolder/$keyw"
 	aria2c -c -d "$downloadfolder/$keyw" --enable-dht=true --enable-dht6=true --enable-peer-exchange=true --follow-metalink=mem --seed-time=0 --disk-cache=1024M --enable-color=true "${torlinklist[i]}" | tee "/tmp/$keyw.log"
-	echo "$keyw""_""$epnum" >> "$downloadfolder/autodownload.list"
+	recode=$?
+	if [[ $recode -eq 0 ]]
+	then
+		echo "$keyw""_""$epnum" >> "$downloadfolder/autodownload.list"
+		tail "/tmp/$keyw.log" | mail -v -s "Notification From My Networktools: $keyw.log" `git config --get user.email`
+		exit 0
+	else
+		echo "$keyw""_""$epnum not finished , interrupt when aria2c!!!"
+		exit 1
+	fi
 else
 	echo "$keyw not found in web page!"
 fi
 
-	if [[ -f /tmp/auto_down_bat.list ]]
-	then
-		sed -i "/$keyw/d" /tmp/auto_down_bat.list
-	fi
 date
 exit 0
