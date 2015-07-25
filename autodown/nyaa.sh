@@ -32,8 +32,13 @@ then
 fi
 
 
-#set -x
-textall=`curl -s --compressed -G --data-urlencode "title=$keyw" http://share.popgo.org/search.php`
+set -x
+#
+textall=`curl --socks5 127.0.0.1:1080 -s --compressed -G --data-urlencode "page=search" \
+--data-urlencode "cats=1_11" \
+--data-urlencode "filter=0" \
+--data-urlencode "term=$keyw" \
+http://www.nyaa.se/`
 
 	re_code=$?
 	if [[ ! $re_code -eq 0 ]]
@@ -42,6 +47,10 @@ textall=`curl -s --compressed -G --data-urlencode "title=$keyw" http://share.pop
 		date
 		exit 2
 	fi
+
+echo $textall
+
+exit 0
 
 #set +x
 IFS=$'\r\n'
