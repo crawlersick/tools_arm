@@ -74,7 +74,7 @@ then
 #【極影字幕社】 ★7月新番 【亂步奇譚 Game of Laplace】【Ranpo Kitan Game of Laplace】【03】BIG5 MP4_720P
 	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_-]+(?=[\]話话】\s])'`
 
-	if [[ ! -z $epnum ]]
+	if [[ ! -z "$epnum" && "$epnum" != '-' ]]
 	then
 
 		echo 'epnumber is '$epnum
@@ -109,7 +109,7 @@ then
 	if [[ $recode -eq 0 ]]
 	then
 		echo "$keyw""_""$epnum" >> "$downloadfolder/autodownload.list"
-		tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "Notification From My Networktools: $keyw.log" `git config --get user.email`
+		tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "Notification - $keyw From My Networktools: $keyw.log" `git config --get user.email`
 		date
 		exit 0
 	else
