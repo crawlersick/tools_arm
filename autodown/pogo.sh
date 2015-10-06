@@ -66,13 +66,26 @@ aaaa=`echo -e '\u5B57'`
 echo ${namelist[i]} | grep -q $aaaa
 greprec=$?
 seedcnt=`echo ${sizelist[i]}|awk -F "</td><td>" '{print $2}'|awk -F "</td>" '{print $1}'`
+
 if [[ $seedcnt -gt $seedw && $greprec -eq 0 ]]
 then
+
+	sizemb=`echo ${sizelist[i]}|awk -F "</td><td>" '{print $1}'|awk '{print $1}'|awk -F '.' '{print $1}'`
+	sizeunit=`echo ${sizelist[i]}|awk -F "</td><td>" '{print $1}'|awk '{print $2}'`
+echo "size is " $sizemb
+echo "unit is " $sizeunit
+	if [[ $sizeunit -eq 'MB' && $sizemb -lt 55 ]]
+	then
+		echo "too small size, will continue"
+		i=`expr $i + 1`
+		continue
+	fi
+
 		echo ${namelist[i]}'***'${sizelist[i]}'***'${torlinklist[i]}'***'${dpagelist[i]}
 
 #【極影字幕社】 ★ 六花的勇者 Rokka_no_Yuusha 第03話 BIG5 MP4 720P
 #【極影字幕社】 ★7月新番 【亂步奇譚 Game of Laplace】【Ranpo Kitan Game of Laplace】【03】BIG5 MP4_720P
-	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_-]+(?=[\]話话】\s])'`
+	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.-]+(?=[\]話话】\s])'`
 
 	if [[ ! -z "$epnum" && "$epnum" != '-' ]]
 	then
@@ -104,17 +117,17 @@ then
 	fi
 
 	mkdir -p "$downloadfolder/$keyw"
-	aria2c -c -d "$downloadfolder/$keyw" --enable-dht=true --enable-dht6=true --enable-peer-exchange=true --follow-metalink=mem --seed-time=0 --disk-cache=1024M --enable-color=true "${torlinklist[i]}" | tee "/tmp/$keyw.log"
+	aria2c -c -d "$downloadfolder/$keyw" --enable-dht=true --enable-dht6=true --enable-peer-exchange=true --follow-metalink=mem --seed-time=0 --disk-cache=1024M --enable-color=true --max-overall-upload-limit=50K --bt-tracker="udp://coppersurfer.tk:6969/announce,http://t2.popgo.org:7456/annonce" "${torlinklist[i]}" | tee "/tmp/$keyw.log"
 	recode=$?
 	if [[ $recode -eq 0 ]]
 	then
 		echo "$keyw""_""$epnum" >> "$downloadfolder/autodownload.list"
-		tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "Notification - $keyw From My Networktools: $keyw.log" `git config --get user.email`
-		date
+		tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "$keyw""_""$epnum"" Done!" `git config --get user.email` 
+		date | tee -a "/tmp/$keyw.log"
 		exit 0
 	else
-		echo "$keyw""_""$epnum not finished , interrupt when aria2c!!!"
-		date
+		echo "$keyw""_""$epnum not finished , interrupt when aria2c!!!" | tee -a "/tmp/$keyw.log"
+		date | tee -a "/tmp/$keyw.log"
 		exit 1
 	fi
 else
