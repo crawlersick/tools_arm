@@ -63,7 +63,11 @@ while [[ $i -lt ${#torlinklist[@]} ]]
 do
 #echo ${namelist[i]}'***'${sizelist[i]}'***'${torlinklist[i]}'***'${dpagelist[i]}
 aaaa=`echo -e '\u5B57'`
-echo ${namelist[i]} | grep -q $aaaa
+bbbb=`echo -e '\u961F'`
+cccc=`echo -e '\u7EC4'`
+dddd=`echo -e '\u7B80'`
+eeee=`echo -e '\u7E41'`
+echo ${namelist[i]} | grep -qP "[$aaaa$bbbb$cccc$dddd$eeee]"
 greprec=$?
 seedcnt=`echo ${sizelist[i]}|awk -F "</td><td>" '{print $2}'|awk -F "</td>" '{print $1}'`
 
@@ -85,7 +89,8 @@ echo "unit is " $sizeunit
 
 #【極影字幕社】 ★ 六花的勇者 Rokka_no_Yuusha 第03話 BIG5 MP4 720P
 #【極影字幕社】 ★7月新番 【亂步奇譚 Game of Laplace】【Ranpo Kitan Game of Laplace】【03】BIG5 MP4_720P
-	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.-]+(?=[\]話话】\s])'`
+	#epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.-]+(?=[\]話话】\s])'`
+	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【])[0-9_\.-]+(?=[\]話话】])'`
 
 	if [[ ! -z "$epnum" && "$epnum" != '-' ]]
 	then
