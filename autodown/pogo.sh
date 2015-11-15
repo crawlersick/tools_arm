@@ -10,7 +10,7 @@ then
 fi
 if [[ -z "$seedw" ]]
 then 
-	seedw=20
+	seedw=15
 fi
 
 echo "$seedw" | grep -qP '[0-9]+'
@@ -89,8 +89,9 @@ echo "unit is " $sizeunit
 
 #【極影字幕社】 ★ 六花的勇者 Rokka_no_Yuusha 第03話 BIG5 MP4 720P
 #【極影字幕社】 ★7月新番 【亂步奇譚 Game of Laplace】【Ranpo Kitan Game of Laplace】【03】BIG5 MP4_720P
-	#epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.-]+(?=[\]話话】\s])'`
-	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【])[0-9_\.-]+(?=[\]話话】])'`
+       #epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.-]+(?=[\]話话】\s])'`
+	epnum=`echo ${namelist[i]}|grep -ioP '(?<=[\[第【\s])[0-9_\.]+(?=[\]\[話话】\s])'`
+	echo 'epnum---------'$epnum
 
 	if [[ ! -z "$epnum" && "$epnum" != '-' ]]
 	then

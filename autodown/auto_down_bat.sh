@@ -12,6 +12,7 @@ i=0
 	do
 		
 		pogo.sh "${namelist[i]}" &
+                sleep 30
 
 	i=`expr $i + 1`
 	done
