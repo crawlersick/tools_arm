@@ -2,4 +2,4 @@
 (?<='\)" target="_blank" title=").*?(?=")
 (?<=</a></td><td class="index_node">).*?(?=</td><td class="index_node"><a href=)
 (?<=</td><td class="inde_tab_seedname"><a href=").*?(?=")
-(?<=<td class="inde_tab_hot"><a href=").*?(?=&)
+(?<=<td class="inde_tab_hot"><a href=").*?(?=")

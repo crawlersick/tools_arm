@@ -1,6 +1,10 @@
 #!/bin/bash
 
 downloadfolder=$HOME'/Downloads'
+if [[ ! -d $downloadfolder ]]
+then
+	mkdir $downloadfolder
+fi
 keyw=$1
 seedw=$2
 if [[ -z "$keyw" ]]
@@ -44,11 +48,12 @@ textall=`curl -s --compressed -G --data-urlencode "title=$keyw" http://share.pop
 	fi
 
 #set +x
+explist=$HOME/tools/autodown/explist
 IFS=$'\r\n'
-namelist=($(echo $textall | grep -oP "`sed -n 2p explist`"))
-sizelist=($(echo $textall | grep -oP "`sed -n 3p explist`"))
-dpagelist=($(echo $textall | grep -oP "`sed -n 4p explist`"))
-torlinklist=($(echo $textall | grep -oP "`sed -n 5p explist`"))
+namelist=($(echo $textall | grep -oP "`sed -n 2p $explist`"))
+sizelist=($(echo $textall | grep -oP "`sed -n 3p $explist`"))
+dpagelist=($(echo $textall | grep -oP "`sed -n 4p $explist`"))
+torlinklist=($(echo $textall | grep -oP "`sed -n 5p $explist`"))
 #set -x
 if [[ ! ${#torlinklist[@]} == ${#dpagelist[@]} && ${#namelist[@]} == ${#sizelist[@]} && ${#sizelist[@]} == ${#dpagelist[@]} ]]
 then
@@ -122,14 +127,26 @@ then
 		exit 0
 	fi
 
+	rm -rf "$downloadfolder/$keyw"
 	mkdir -p "$downloadfolder/$keyw"
-	aria2c -c -d "$downloadfolder/$keyw" --enable-dht=true --enable-dht6=true --enable-peer-exchange=true --follow-metalink=mem --seed-time=0 --disk-cache=1024M --enable-color=true --max-overall-upload-limit=50K --bt-tracker="udp://coppersurfer.tk:6969/announce,http://t2.popgo.org:7456/annonce" "${torlinklist[i]}" | tee "/tmp/$keyw.log"
+	aria2c -c -d "$downloadfolder/$keyw" --enable-dht=true --enable-peer-exchange=true --follow-metalink=mem --seed-time=0 --max-overall-upload-limit=50K "${torlinklist[i]}" | tee "/tmp/$keyw.log"
 	recode=$?
-	if [[ $recode -eq 0 ]]
+	sleep 10
+	ls $downloadfolder/$keyw/*.aria2
+	ariacheck=$?
+	if [[ ! $ariacheck -eq 0 ]]
 	then
 		echo "$keyw""_""$epnum" >> "$downloadfolder/autodownload.list"
-		tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "$keyw""_""$epnum"" Done!" `git config --get user.email` 
+		#tail "/tmp/$keyw.log" | perl -p -e 's/\/home\/.*?\//^_^.../' |  mail -v -s "$keyw""_""$epnum"" Done!" `git config --get user.email` 
 		date | tee -a "/tmp/$keyw.log"
+		if [[ ! -d /mnt/0/Downloads ]]
+		then
+			mkdir /mnt/0/Downloads
+		fi
+		echo 'start cp'
+		sudo cp -rn $downloadfolder/$keyw /mnt/0/Downloads
+		rm -r $downloadfolder/$keyw
+		echo 'cp rm end'
 		exit 0
 	else
 		echo "$keyw""_""$epnum not finished , interrupt when aria2c!!!" | tee -a "/tmp/$keyw.log"
